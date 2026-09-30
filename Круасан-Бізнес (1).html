@@ -1,0 +1,575 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Круасан-Бізнес</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a single working column — decisions panel, then a vertical ledger of five years, then the verdict. */
+:root{
+  --bg:#EDF1F7; --surface:#FFFFFF; --ink:#12203A; --muted:#55627A; --line:#D5DDEA;
+  --blue:#2459C6; --blue-soft:#DCE6FA; --butter:#F2B632; --butter-ink:#3A2A00;
+  --good:#1E8A55; --bad:#C0392B; --good-soft:#DDF2E6; --bad-soft:#F8DEDA;
+  --f-display:'Unbounded', 'Trebuchet MS', sans-serif;
+  --f-body:'Manrope', 'Segoe UI', Arial, sans-serif;
+  --f-mono:'JetBrains Mono', 'Courier New', monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1626; --surface:#16213A; --ink:#E8EEF8; --muted:#9AA8C2; --line:#2A3858;
+  --blue:#7FA6FF; --blue-soft:#1F3160; --butter:#F5C45A; --butter-ink:#2A1E00;
+  --good:#5BD394; --bad:#FF8A7A; --good-soft:#15392A; --bad-soft:#44201C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1626; --surface:#16213A; --ink:#E8EEF8; --muted:#9AA8C2; --line:#2A3858;
+  --blue:#7FA6FF; --blue-soft:#1F3160; --butter:#F5C45A; --butter-ink:#2A1E00;
+  --good:#5BD394; --bad:#FF8A7A; --good-soft:#15392A; --bad-soft:#44201C; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding:24px 16px 64px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,44px);font-weight:700}
+h2{font-size:22px;font-weight:700}
+h3{font-size:16px;font-weight:500}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--blue)}
+header{display:flex;flex-direction:column;gap:10px}
+header .lead{color:var(--muted);max-width:62ch}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.rule b{font-family:var(--f-mono);font-size:20px}
+.rule span{color:var(--muted);font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:20px}
+.choice{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start;padding-bottom:18px;border-bottom:1px dashed var(--line)}
+.choice:last-of-type{border-bottom:none;padding-bottom:0}
+.choice .q{display:flex;flex-direction:column;gap:4px;min-width:0}
+.choice .q small{color:var(--muted);font-size:13px}
+.opts{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.opt{font:inherit;cursor:pointer;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:120px;flex:1 1 150px;transition:border-color .15s,background .15s}
+.opt .t{font-weight:700}
+.opt .c{font-size:13px;color:var(--muted)}
+.opt:hover{border-color:var(--blue)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
+.opt[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft)}
+.opt.baker{flex:0 1 auto;min-width:74px;align-items:center;text-align:center}
+.opt.baker .t{font-family:var(--f-mono);font-size:20px}
+.summary{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:14px 16px}
+.summary .facts{display:flex;flex-wrap:wrap;gap:8px 22px}
+.summary .facts div{display:flex;flex-direction:column}
+.summary .facts span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.btn{font:inherit;font-weight:700;cursor:pointer;border:none;border-radius:999px;padding:13px 24px;background:var(--butter);color:var(--butter-ink);font-size:16px}
+.btn.secondary{background:transparent;color:var(--blue);border:1.5px solid var(--blue)}
+.btn:disabled{opacity:.45;cursor:default}
+.team{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.team label{font-weight:700}
+.team input{font:inherit;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);min-width:0;flex:1 1 200px;max-width:320px}
+/* game */
+.scoreboard{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch}
+.score{flex:1 1 180px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.score span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.score b{font-family:var(--f-mono);font-size:28px}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--blue-soft);color:var(--ink)}
+.years{display:flex;flex-direction:column;gap:14px}
+.year{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:grid;grid-template-columns:120px 1fr 170px;gap:18px;align-items:start}
+.year.locked{opacity:.55;border-style:dashed}
+.year .num{font-family:var(--f-display);font-size:14px;color:var(--muted)}
+.year .num b{display:block;font-size:34px;color:var(--ink);line-height:1.1}
+.year .story{display:flex;flex-direction:column;gap:8px;min-width:0}
+.year .story h3{font-size:17px}
+.year .story .note{color:var(--muted);font-size:14px}
+.calc{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.calc i{font-style:normal;color:var(--ink)}
+.flag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;margin-right:6px}
+.flag.bad{background:var(--bad-soft);color:var(--bad)}
+.flag.good{background:var(--good-soft);color:var(--good)}
+.year .res{text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.year .res .p{font-family:var(--f-mono);font-size:28px;font-weight:700}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.bar{height:8px;border-radius:4px;background:var(--line);width:100%;position:relative;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;left:0;background:var(--blue);border-radius:4px}
+.demand{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.cap{flex:1 1 200px;min-width:0}
+.cap .bar{height:14px}
+.cap .bar i.sold{background:var(--blue)}
+.cap .bar i.lost{background:repeating-linear-gradient(45deg,var(--bad) 0 4px,transparent 4px 8px);opacity:.7}
+.legend{font-size:12px;color:var(--muted)}
+.fade{animation:in .45s ease both}
+@keyframes in{from{transform:translateY(8px);opacity:.3}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}}
+.verdict{background:var(--surface);border:2px solid var(--blue);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:16px}
+.verdict .big{font-family:var(--f-mono);font-size:clamp(36px,7vw,56px);font-weight:700}
+.lessons{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.lessons li{padding:12px 14px;border-radius:12px;background:var(--bg);display:flex;gap:10px;align-items:flex-start}
+.lessons li .d{font-family:var(--f-mono);font-weight:700;white-space:nowrap}
+.history{width:100%;border-collapse:collapse;font-size:14px}
+.history th,.history td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+.history td.n{font-family:var(--f-mono);text-align:right}
+.tablewrap{overflow-x:auto}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:720px){
+  .choice{grid-template-columns:1fr}
+  .year{grid-template-columns:1fr;gap:10px}
+  .year .res{text-align:left;align-items:flex-start}
+}
+</style>
+
+<style>
+.budget{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+.meter{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--surface);border:2px solid var(--blue);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.meter .left{font-family:var(--f-mono);font-size:clamp(34px,6vw,48px);font-weight:700;line-height:1}
+.meter .track{height:16px;border-radius:8px;background:var(--line);overflow:hidden;position:relative}
+.meter .track i{position:absolute;top:0;bottom:0;left:0;background:var(--blue);transition:width .35s ease}
+.meter .track i.credit{background:repeating-linear-gradient(45deg,var(--butter) 0 5px,transparent 5px 10px)}
+.lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.lines li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted var(--line);padding-bottom:5px}
+.lines li b{font-family:var(--f-mono);white-space:nowrap}
+.lines li.muted{color:var(--muted)}
+.warn{padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600}
+.warn.credit{background:var(--butter);color:var(--butter-ink)}
+.warn.stop{background:var(--bad-soft);color:var(--bad)}
+.warn.ok{background:var(--good-soft);color:var(--good)}
+.choices{display:flex;flex-direction:column;gap:18px;min-width:0}
+.choice{grid-template-columns:1fr;gap:10px}
+details.change{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+details.change summary{cursor:pointer;font-weight:700;color:var(--blue)}
+details.change[open] summary{margin-bottom:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--butter);color:var(--butter-ink)}
+.q .why{font-size:13px;color:var(--muted);border-left:3px solid var(--butter);padding-left:8px}
+.news{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.news div{background:var(--blue-soft);border:2px solid var(--blue);border-radius:14px;padding:14px 16px;font-size:16px}
+.news b{color:var(--blue)}
+.win{align-self:flex-start;font-weight:700;padding:8px 14px;border-radius:999px;background:var(--good-soft);color:var(--good)}
+.win.lose{background:var(--bad-soft);color:var(--bad)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.badge{display:flex;gap:10px;align-items:center;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg)}
+.badge .i{font-size:28px;line-height:1}
+.badge b{display:block;font-size:14px}
+.badge span{font-size:12px;color:var(--muted)}
+.badge.got{border-color:var(--butter);background:var(--surface)}
+.badge.no{opacity:.4;filter:grayscale(1)}
+@media (max-width:760px){.budget{grid-template-columns:1fr}.meter{position:static}}
+</style>
+
+<style>
+[hidden]{display:none!important}
+.intro{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:'head card' 'steps card';gap:22px 28px;align-items:center;padding-block:clamp(8px,4vw,40px)}
+.intro .story{grid-area:head}.intro .steps{grid-area:steps}.intro .start-card{grid-area:card}
+.intro .story{display:flex;flex-direction:column;gap:18px;min-width:0}
+.course{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.course .pill{font-family:var(--f-display);font-weight:700;font-size:14px;padding:6px 14px;border-radius:999px;background:var(--blue);color:var(--surface)}
+.course .subj{font-weight:700;font-size:16px}
+.intro h1{font-size:clamp(38px,7vw,72px);line-height:1.02}
+.intro h1 span{display:block;color:var(--blue)}
+.intro .lead{font-size:18px;color:var(--muted);max-width:52ch}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.steps li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.steps .n{width:40px;height:40px;border-radius:50%;background:var(--blue);color:var(--surface);font-family:var(--f-display);font-weight:700;display:grid;place-items:center}
+.steps b{display:block}
+.steps span{color:var(--muted);font-size:15px}
+.start-card{background:var(--surface);border:2px solid var(--blue);border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.emblem{width:88px;height:88px;border-radius:50%;background:var(--butter);display:grid;place-items:center;font-size:46px}
+.start-card .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.start-card .facts div{background:var(--bg);border-radius:12px;padding:10px;display:flex;flex-direction:column}
+.start-card .facts b{font-family:var(--f-mono);font-size:20px}
+.start-card .facts span{font-size:12px;color:var(--muted)}
+.start-card label{font-weight:700}
+.start-card input{font:inherit;font-size:17px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.start-card input:focus-visible{outline:3px solid var(--butter);outline-offset:1px}
+.start-card .btn{font-size:18px;padding:16px 24px;width:100%}
+.leaders{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.leaders b{color:var(--ink)}
+@media (max-width:760px){.intro{grid-template-columns:1fr;grid-template-areas:'head' 'card' 'steps';gap:20px}.emblem{display:none}.intro .lead{font-size:16px}.start-card{padding:18px}}
+</style>
+<section class="intro" id="intro">
+  <div class="story">
+    <div class="course"><span class="pill">Семінар 2</span><span class="subj">Економічна теорія управління підприємством</span></div>
+    <div class="eyebrow">Тема: аналіз витрат · економічна гра</div>
+    <h1>Круасан-Бізнес<span>5 років у пекарні</span></h1>
+    <p class="lead">Ви відкриваєте пекарню, і ваші круасани можуть стати хітом міста. Або не стати. Скільки клієнтів прийде, наперед не знає ніхто, а гроші доведеться витрачати вже зараз.</p>
+  </div>
+    <ol class="steps">
+      <li><span class="n">1</span><div><b>Розподіліть бюджет</b><span>Пекарі, склад, генератор, доставка. Кожне рішення одразу зменшує суму.</span></div></li>
+      <li><span class="n">2</span><div><b>Проживіть 5 років</b><span>Ажіотаж, відключення, криза. Перед кожним роком стратегію можна змінити.</span></div></li>
+      <li><span class="n">3</span><div><b>Порівняйте результат</b><span>Прибуток, місце серед команд і досягнення. Або банкрутство.</span></div></li>
+    </ol>
+  <div class="start-card">
+    <div class="emblem" aria-hidden="true">🥐</div>
+    <div class="facts">
+      <div><b>450</b><span>тис. грн на старті</span></div>
+      <div><b>5</b><span>років гри</span></div>
+      <div><b>9</b><span>досягнень</span></div>
+    </div>
+    <label for="teamName">Назва команди</label>
+    <input id="teamName" type="text" placeholder="Наприклад, «Масляні королі»" maxlength="40">
+    <button class="btn" id="introBtn" type="button">Почати гру</button>
+    <div class="leaders" id="leaders"></div>
+  </div>
+</section>
+
+<div class="wrap" id="app" hidden>
+  <header>
+    <div class="eyebrow">Економічна гра · аналіз витрат</div>
+    <h1>Круасан-Бізнес: 5 років</h1>
+    <p class="lead">Ви відкриваєте пекарню. Спершу розподіліть гроші: кожне рішення одразу зменшує бюджет. Коли стратегія готова, запускайте роки й дивіться, як усе склалося. Попит заздалегідь невідомий: прогноз від 20 до 40 тис. круасанів на рік.</p>
+  </header>
+
+  <section class="rules" aria-label="Правила">
+    <div class="rule"><b>450 тис. грн</b><span>стартовий капітал</span></div>
+    <div class="rule"><b>30 грн</b><span>заробляєте з кожного проданого круасана (ціна мінус інгредієнти). Гроші надходять протягом року</span></div>
+    <div class="rule"><b>1 пекар = 10 тис. шт.</b><span>стільки круасанів на рік пече один пекар. Його зарплата 120 тис. грн, платите на початку року</span></div>
+    <div class="rule"><b>Клієнти і круасани</b><span>Клієнтів більше, ніж спекли? Решта йде до конкурентів. Менше? Зарплату пекарям однаково платите повністю</span></div>
+    <div class="rule"><b>Кредит 25 %</b><span>якщо на початок року грошей не вистачає, банк позичає. Відсотки сплачуєте наприкінці року</span></div>
+    <div class="rule"><b>Ліміт боргу 200 тис.</b><span>якщо наприкінці року борг більший, пекарня банкрутує і гра закінчується</span></div>
+  </section>
+
+
+  <!-- game view -->
+  <section id="gameView" hidden>
+    <div class="wrap" style="gap:18px;padding:0">
+      <div class="scoreboard">
+        <div class="score"><span>Гроші зараз</span><b id="cash">450</b></div>
+        <div class="score"><span>Прибуток разом</span><b id="total">0</b></div>
+        <div class="score"><span>Відсотки сплачено</span><b id="intPaid">0</b></div>
+        <div class="score"><span>Рік</span><b id="yearNow">0 / 5</b></div>
+      </div>
+      <div class="years" id="years" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- planner (start page, then optional between years) -->
+  <section id="plannerWrap">
+    <div class="news" id="news" aria-live="polite"></div>
+    <details class="change" id="changeBox" open>
+      <summary id="changeSummary">Стратегія на рік 1</summary>
+      <div class="budget">
+        <div class="choices">
+          <div class="choice"><div class="q"><span class="tag">Фіксовані витрати</span><h3>1. Скільки пекарів?</h3><small>120 тис. грн на рік кожен, пече 10 тис. круасанів</small><p class="why">Зарплату платите, навіть якщо круасани не продались, тому в межах року це фіксовані витрати. Змінити кількість пекарів можна лише між роками, тобто в довгому періоді.</p></div><div class="opts" id="opt-bakers"></div></div>
+          <div class="choice"><div class="q"><span class="tag">Фіксовані чи змінні</span><h3>2. Склад</h3><small>де зберігаєте борошно, масло й готові круасани</small><p class="why">Близько: фіксована оренда. Далеко: менша оренда, але доставка залежить від обсягу продажів, тобто частина витрат змінна.</p></div><div class="opts" id="opt-wh"></div></div>
+          <div class="choice"><div class="q"><span class="tag">Інвестиція → безповоротні витрати</span><h3>3. Генератор</h3><small>купується один раз і залишається у вас</small><p class="why">Після купівлі ці 100 тис. уже не повернути. Купуйте, лише якщо очікуєте, що генератор принесе більше, ніж коштує. А після купівлі ці гроші не мають впливати на наступні рішення.</p></div><div class="opts" id="opt-gen"></div></div>
+          <div class="choice"><div class="q"><span class="tag">Робити чи купувати (make-or-buy)</span><h3>4. Доставка клієнтам</h3><small>робити самим чи купити послугу в агрегатора</small><p class="why">Порівнюйте лише витрати, що відрізняються між варіантами: це релевантні витрати. Кур'єр коштує фіксовані 100 тис. на рік. Агрегатор бере комісію з кожного продажу, але ви залежите від його умов (hold-up).</p></div><div class="opts" id="opt-dl"></div></div>
+        </div>
+        <aside class="meter" aria-live="polite">
+          <div class="eyebrow">Бюджет на початок року <span id="mYear">1</span></div>
+          <div><span class="legend">Залишиться після оплати витрат року</span><div class="left" id="mLeft">450</div><span class="legend">тис. грн</span></div>
+          <div class="track" aria-hidden="true"><i id="mBar"></i></div>
+          <ul class="lines" id="mLines"></ul>
+          <div id="mWarn"></div>
+          <p class="legend">Протягом року надійдуть гроші за продані круасани (30 грн за штуку). З них одразу віднімуться витрати, що залежать від продажів: доставка зі складу за містом і комісія агрегатора.</p>
+          <button class="btn" id="goBtn" type="button">Затвердити стратегію і почати</button>
+        </aside>
+      </div>
+    </details>
+    <div class="actions" id="yearActions" hidden style="margin-top:14px">
+      <button class="btn" id="nextBtn" type="button">Відкрити рік 2</button>
+    </div>
+  </section>
+
+  <section class="verdict" id="verdict" hidden></section>
+
+  <section class="panel" id="historyBox" hidden>
+    <h2>Результати команд на цьому пристрої</h2>
+    <div class="tablewrap"><table class="history"><thead><tr><th>#</th><th>Команда</th><th>Пекарі по роках</th><th>Досягнення</th><th style="text-align:right">Гроші наприкінці, тис. грн</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+    <div class="actions"><button class="btn secondary" id="clearHist" type="button">Очистити таблицю</button></div>
+  </section>
+</div>
+
+<style>
+/* responsive polish */
+.wrap{max-width:1100px}
+.opt{min-height:52px}
+.btn{min-height:48px}
+.rules{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rule b{font-size:18px}
+#opt-bakers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#opt-bakers .opt{min-width:0}
+#opt-wh,#opt-gen,#opt-dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#opt-wh .opt,#opt-gen .opt,#opt-dl .opt{min-width:0}
+.scoreboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.score{min-width:0}
+.mbar{display:none}
+@media (max-width:760px){
+  body{padding-block:16px 120px;font-size:15px}
+  h1{font-size:28px}
+  header .lead{font-size:15px}
+  .rules{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .rule{padding:10px 12px}
+  .rule b{font-size:16px}
+  .rule span{font-size:12.5px;line-height:1.35}
+  .panel,.verdict{padding:16px;border-radius:14px}
+  details.change{padding:12px 14px}
+  .q .why{font-size:12.5px}
+  .opt{padding:10px 12px}
+  .opt .c{font-size:12px}
+  .scoreboard{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .score{padding:10px 12px}
+  .score b{font-size:22px}
+  .year{padding:14px 16px}
+  .year .num b{font-size:26px;display:inline;margin-left:6px}
+  .year .res{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+  .year .res .p{font-size:24px}
+  .meter{border-width:1.5px}
+  .meter #goBtn{display:none}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;gap:12px;align-items:center;justify-content:space-between;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:2px solid var(--blue);box-shadow:0 -6px 18px rgba(18,32,58,.12)}
+  .mbar[hidden]{display:none}
+  .mbar .v{display:flex;flex-direction:column;min-width:0}
+  .mbar .v span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .mbar .v b{font-family:var(--f-mono);font-size:22px;line-height:1.1}
+  .mbar .v i{font-style:normal;font-size:12px;font-weight:700}
+  .mbar .btn{padding:12px 16px;font-size:15px;flex:0 0 auto}
+  .badges{grid-template-columns:1fr}
+  .history{font-size:13px}
+}
+@media (max-width:380px){.rules{grid-template-columns:1fr}#opt-bakers .opt .c{display:none}}
+</style>
+<div class="mbar" id="mbar" role="region" aria-label="Бюджет" hidden>
+  <div class="v"><span>Залишиться</span><b id="mbLeft">450</b><i id="mbState">без кредиту</i></div>
+  <button class="btn" id="mbBtn" type="button">Почати</button>
+</div>
+
+<script>
+const START=450, LIMIT=200, RATE=0.25;
+const DEMAND=[20,30,35,25,40];
+const EVENTS=[
+  {t:'Вас ще мало хто знає', n:'Пекарня тільки відкрилась, клієнти придивляються.'},
+  {t:'Круасани стали вірусними в TikTok!', n:'Блогерка зняла відео, зранку черги.'},
+  {t:'Зима відключень', n:'Три місяці графіків: без генератора пекарня стоїть частину днів, і обслужити вдається лише 25 тис. клієнтів. Діє нова комісія агрегатора: 5 грн.'},
+  {t:'Важкий рік', n:'Люди економлять, частина виїхала. Комісія агрегатора залишається 5 грн.'},
+  {t:'Замовлення від IT-офісів', n:'Мережа офісів замовляє круасани на сніданки. Комісія агрегатора й далі 5 грн.'}
+];
+const OPTS={
+  bakers:[1,2,3,4,5].map(n=>({v:n,t:String(n),c:'−'+(n*120)+' тис.'})),
+  wh:[{v:'near',t:'Близько, у місті',c:'−150 тис. на рік'},{v:'far',t:'Далеко, за містом',c:'−50 тис. + 3 грн за кожен проданий'}],
+  gen:[{v:true,t:'Купити',c:'−100 тис. один раз'},{v:false,t:'Не купувати',c:'0 грн'}],
+  dl:[{v:'agg',t:'Агрегатор (Glovo)',c:'3 грн за кожен проданий круасан'},{v:'own',t:'Власний кур’єр',c:'−100 тис. на рік'}]
+};
+const LABEL={near:'склад близько',far:'склад далеко',agg:'агрегатор',own:'кур’єр'};
+let plan={bakers:2,wh:'near',gen:false,dl:'agg'};
+let game={year:0,cash:START,hasGen:false,rows:[],started:false,over:false,bankrupt:false};
+
+function upfront(c,hasGen){return {wages:c.bakers*120, wh:c.wh==='near'?150:50, dl:c.dl==='own'?100:0, gen:(c.gen&&!hasGen)?100:0};}
+function sumUp(u){return u.wages+u.wh+u.dl+u.gen;}
+// simulate one year from a given cash position
+function yearCalc(y,c,cash,hasGen){
+  const u=upfront(c,hasGen), genOwned=hasGen||c.gen;
+  const afterPay=cash-sumUp(u);
+  const borrowed=Math.max(0,-afterPay), interest=Math.round(borrowed*RATE);
+  const d=(y===2&&!genOwned)?25:DEMAND[y];
+  const cap=c.bakers*10, sold=Math.min(d,cap), rate=y<2?3:5;
+  const revenue=sold*30;
+  const varWh=c.wh==='far'?3*sold:0, varDl=c.dl==='agg'?rate*sold:0;
+  const profit=revenue-sumUp(u)-varWh-varDl;
+  const end=afterPay+revenue-varWh-varDl-interest;
+  return {y,d,cap,sold,lost:Math.max(0,d-cap),idle:Math.max(0,cap-d),revenue,u,varWh,varDl,rate,profit,interest,borrowed,afterPay,end,genOwned,blocked:false};
+}
+function playPlan(plans){let cash=START,has=false,interest=0;for(let y=0;y<5;y++){const r=yearCalc(y,plans[y],cash,has);if(r.blocked)return null;has=r.genOwned;interest+=r.interest;cash=r.end;if(cash<-LIMIT)return {cash,interest,bankrupt:true};}return {cash,interest,bankrupt:false};}
+const CONFIGS=[];for(const b of [1,2,3,4,5])for(const w of ['near','far'])for(const g of [true,false])for(const d of ['agg','own'])CONFIGS.push({bakers:b,wh:w,gen:g,dl:d});
+function bestStatic(){let best=null;for(const c of CONFIGS){const r=playPlan(Array(5).fill(c));if(r&&!r.bankrupt&&(!best||r.cash>best.cash))best={...r,c};}return best;}
+function perfect(){let best=null;for(const gy of [-1,0,1,2]){let plans=[],has=false,cash=START;for(let y=0;y<5;y++){let bc=null,br=null;for(const c of CONFIGS){if(c.gen!==(y===gy))continue;const r=yearCalc(y,c,cash,has);if(r.blocked)continue;if(!br||r.end>br.end){br=r;bc=c;}}plans.push(bc);has=br.genOwned;cash=br.end;}const r=playPlan(plans);if(r&&(!best||r.cash>best.cash))best={...r,plans};}return best;}
+const REF={static:bestStatic(),perfect:perfect(),cautious:playPlan(Array(5).fill({bakers:2,wh:'far',gen:false,dl:'agg'})),bold:playPlan(Array(5).fill({bakers:5,wh:'near',gen:true,dl:'own'}))};
+
+const fmt=n=>(n>0?'+':n<0?'−':'')+Math.abs(n).toLocaleString('uk-UA');
+const plain=n=>(n<0?'−':'')+Math.abs(n).toLocaleString('uk-UA');
+const cfgText=(c,own)=>`${c.bakers} пек. · ${LABEL[c.wh]} · ${own?'генератор':'без генератора'} · ${LABEL[c.dl]}`;
+function esc(s){return s.replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+function teamName(){return document.getElementById('teamName').value.trim();}
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let shownLeft=null;
+function animateLeft(to){
+  const el=document.getElementById('mLeft');
+  if(reduce||shownLeft===null){shownLeft=to;el.textContent=plain(to);return;}
+  const from=shownLeft,t0=performance.now();shownLeft=to;
+  (function step(t){const k=Math.min(1,(t-t0)/300);const v=Math.round(from+(to-from)*k);el.textContent=plain(v);if(k<1)requestAnimationFrame(step);})(t0);
+}
+
+function renderPlanner(){
+  if(game.hasGen) plan.gen=false;
+  for(const key of ['bakers','wh','gen','dl']){
+    const box=document.getElementById('opt-'+key); box.innerHTML='';
+    if(key==='gen'&&game.hasGen){box.innerHTML='<span class="chip">Генератор уже є ✓</span>';continue;}
+    OPTS[key].forEach(o=>{
+      const b=document.createElement('button'); b.type='button'; b.className='opt'+(key==='bakers'?' baker':'');
+      b.setAttribute('aria-pressed',String(plan[key]===o.v));
+      let c=o.c; if(key==='dl'&&o.v==='agg') c=(game.year>=2?'5':'3')+' грн за кожен проданий круасан';
+      b.innerHTML=`<span class="t">${o.t}</span><span class="c">${c}</span>`;
+      b.onclick=()=>{plan[key]=o.v;renderPlanner();};
+      box.appendChild(b);
+    });
+  }
+  const u=upfront(plan,game.hasGen), left=game.cash-sumUp(u);
+  document.getElementById('mYear').textContent=game.year+1;
+  animateLeft(left);
+  const el=document.getElementById('mLeft'); el.className='left '+(left<0?'neg':'');
+  const bar=document.getElementById('mBar'), base=Math.max(game.cash,1);
+  bar.className=left<0?'credit':''; bar.style.width=(left>=0?Math.min(100,left/base*100):Math.min(100,-left/LIMIT*100))+'%';
+  const lines=[
+    [`Гроші на початок року`, plain(game.cash)],
+    [`Пекарі: ${plan.bakers} × 120`, '−'+u.wages],
+    [`Склад ${plan.wh==='near'?'близько':'далеко'}`, '−'+u.wh],
+    [`Генератор`, game.hasGen?'вже є':(u.gen?'−100':'0')],
+    [`Доставка: ${plan.dl==='own'?'кур’єр':'агрегатор'}`, u.dl?'−100':'з продажів']
+  ];
+  const vars=[]; if(plan.wh==='far')vars.push('склад 3 грн'); if(plan.dl==='agg')vars.push(`агрегатор ${game.year>=2?5:3} грн`);
+  document.getElementById('mLines').innerHTML=lines.map((l,i)=>`<li${i===0?' class="muted"':''}><span>${l[0]}</span><b>${l[1]}</b></li>`).join('')+
+    `<li class="muted"><span>Змінні за кожен проданий круасан</span><b>${vars.length?vars.join(' + '):'немає'}</b></li>`;
+  const w=document.getElementById('mWarn'), go=document.getElementById('goBtn');
+  if(left<-LIMIT){w.innerHTML=`<div class="warn stop">Ризик банкрутства! Потрібно позичити ${plain(-left)} тис., а ліміт боргу ${LIMIT} тис. Якщо до кінця року продажі не зменшать борг до ${LIMIT} тис., пекарня збанкрутує. Відсотки: ${Math.round(-left*RATE)} тис.</div>`;go.disabled=false;}
+  else if(left<0){w.innerHTML=`<div class="warn credit">Не вистачає ${plain(-left)} тис. Банк дасть кредит під 25 %, відсотки ${Math.round(-left*RATE)} тис. заплатите наприкінці року.</div>`;go.disabled=false;}
+  else {w.innerHTML=`<div class="warn ok">Вистачає без кредиту.</div>`;go.disabled=false;}
+  const mb=document.getElementById('mbLeft'), ms=document.getElementById('mbState');
+  mb.textContent=plain(left); mb.className=left<0?'neg':'';
+  ms.textContent=left<-LIMIT?'ризик банкрутства':left<0?'потрібен кредит '+plain(-left):'без кредиту'; ms.className=left<-LIMIT?'neg':left<0?'':'pos';
+  document.getElementById('mbBtn').textContent=game.started?`Відкрити рік ${game.year+1}`:'Почати гру';
+  const NEWS={0:['📊 <b>Прогноз аналітиків:</b> попит на круасани в місті від 20 до 40 тис. на рік. Точніше ніхто не знає.'],2:['📢 <b>Повідомлення від агрегатора:</b> з цього року комісія зростає з 3 до 5 грн за кожне замовлення. Ресторани від нас залежать, тож ми переглядаємо умови.','🗣 <b>Чутки:</b> синоптики обіцяють холодну зиму.']};
+  const nw=NEWS[game.year]||[];
+  document.getElementById('news').innerHTML=nw.length?`<div class="eyebrow" style="background:none;border:none;padding:0">Новини перед роком ${game.year+1}</div>`+nw.map(n=>`<div>${n}</div>`).join(''):'';
+  if(nw.length&&game.started) document.getElementById('changeBox').open=true;
+  document.getElementById('changeSummary').textContent=game.started?`Змінити рішення на рік ${game.year+1} (або залишити як є)`:'Стратегія на рік 1';
+  go.textContent=game.started?`Відкрити рік ${game.year+1}`:'Затвердити стратегію і почати';
+}
+
+function yearCard(r){
+  const el=document.createElement('article'); el.className='year fade';
+  const ev=EVENTS[r.y], flags=[];
+  if(r.lost>0) flags.push(`<span class="flag bad">${r.lost} тис. клієнтів пішли до конкурентів</span>`);
+  if(r.idle>0) flags.push(`<span class="flag bad">пекарі могли спекти ще ${r.idle} тис., але покупців не було</span>`);
+  if(r.y===2) flags.push(r.genOwned?'<span class="flag good">генератор врятував продажі</span>':'<span class="flag bad">без генератора пекарня частину днів стояла</span>');
+  if(r.y===2&&r.cfg.dl==='own') flags.push('<span class="flag good">нова комісія вас не зачепила</span>');
+  if(r.y===2&&r.cfg.dl==='agg') flags.push('<span class="flag bad">комісія агрегатора вже 5 грн</span>');
+  if(!r.lost&&!r.idle&&r.y!==2) flags.push('<span class="flag good">спекли рівно стільки, скільки купили</span>');
+  if(r.borrowed) flags.push(`<span class="flag bad">кредит ${r.borrowed} тис., відсотки ${r.interest} тис.</span>`);
+  const full=Math.max(r.d,r.cap), soldPct=r.sold/full*100, lostPct=r.lost/full*100;
+  const u=r.u;
+  el.innerHTML=`
+   <div class="num">Рік<b>${r.y+1}</b></div>
+   <div class="story">
+     <h3>${ev.t}</h3>
+     <p class="note">${ev.n}</p>
+     <div class="pick">${cfgText(r.cfg,r.genOwned).split(' · ').map(x=>`<span class="chip">${x}</span>`).join('')}</div>
+     <div class="demand"><span>Попит <b class="mono">${r.d}</b> · Можете спекти <b class="mono">${r.cap}</b> · Продано <b class="mono">${r.sold}</b> тис.</span>
+       <div class="cap"><div class="bar" role="img" aria-label="Продано ${r.sold} з попиту ${r.d}"><i class="sold" style="width:${soldPct}%"></i><i class="lost" style="left:${soldPct}%;width:${lostPct}%"></i></div></div></div>
+     <div>${flags.join('')}</div>
+     <div class="calc"><span>дохід <i>${r.sold}×30 = ${r.revenue}</i></span><span>зарплата <i>−${u.wages}</i></span><span>склад <i>−${u.wh+r.varWh}</i></span><span>доставка <i>−${u.dl+r.varDl}</i></span>${u.gen?`<span>генератор <i>−${u.gen}</i></span>`:''}${r.interest?`<span>відсотки <i>−${r.interest}</i></span>`:''}</div>
+   </div>
+   <div class="res"><span class="legend">прибуток за рік</span><span class="p ${r.profit>=0?'pos':'neg'}">${fmt(r.profit)}</span><span class="legend">гроші: <b class="mono ${r.end<0?'neg':''}">${plain(r.end)}</b></span></div>`;
+  return el;
+}
+function renderBoard(){
+  const c=document.getElementById('cash'); c.textContent=plain(game.cash); c.className=game.cash<0?'neg':'pos';
+  const total=game.rows.reduce((a,r)=>a+r.profit,0), t=document.getElementById('total'); t.textContent=plain(total); t.className=total>=0?'pos':'neg';
+  document.getElementById('intPaid').textContent=game.rows.reduce((a,r)=>a+r.interest,0);
+  document.getElementById('yearNow').textContent=game.rows.length+' / 5';
+}
+function runYear(){
+  const cfg={...plan}, r=yearCalc(game.year,cfg,game.cash,game.hasGen);
+  if(r.blocked) return;
+  game.started=true; game.hasGen=r.genOwned; game.cash=r.end; game.rows.push({...r,cfg}); game.year++;
+  document.getElementById('gameView').hidden=false;
+  document.getElementById('years').appendChild(yearCard(game.rows[game.rows.length-1]));
+  if(game.cash<-LIMIT){game.over=true;game.bankrupt=true;}
+  if(game.year>=5) game.over=true;
+  renderBoard();
+  const box=document.getElementById('changeBox');
+  if(game.over){document.getElementById('plannerWrap').hidden=true;document.getElementById('mbar').hidden=true;renderVerdict();return;}
+  box.open=false; document.getElementById('yearActions').hidden=false;
+  document.getElementById('nextBtn').textContent=`Відкрити рік ${game.year+1}`;
+  renderPlanner();
+  document.getElementById('years').lastElementChild.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+}
+function confetti(big){
+  if(reduce) return;
+  const c=document.createElement('canvas');c.setAttribute('aria-hidden','true');
+  c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';
+  document.body.appendChild(c);const x=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;function size(){c.width=innerWidth*dpr;c.height=innerHeight*dpr;x.setTransform(dpr,0,0,dpr,0,0);}size();
+  const cols=['#F2B632','#2459C6','#E8505B','#1E8A55','#8E5BD8','#FF8A3D','#3CC6E8'];
+  const N=big?260:160,P=[];
+  for(let i=0;i<N;i++){const fromLeft=i%2===0;P.push({x:fromLeft?-10:innerWidth+10,y:innerHeight*0.65+Math.random()*innerHeight*0.2,
+    vx:(fromLeft?1:-1)*(4+Math.random()*7),vy:-(9+Math.random()*9),r:Math.random()*6.28,vr:(Math.random()-.5)*.3,
+    w:6+Math.random()*7,h:4+Math.random()*6,c:cols[i%cols.length],shape:Math.random()<.3?1:0});}
+  const t0=performance.now();
+  (function tick(t){const el=t-t0;x.clearRect(0,0,innerWidth,innerHeight);let alive=0;
+    for(const p of P){p.vy+=0.28;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y<innerHeight+30)alive++;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=Math.max(0,1-el/4500);x.fillStyle=p.c;
+      if(p.shape){x.beginPath();x.arc(0,0,p.w/2,0,6.28);x.fill();}else x.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r*2))+1);x.restore();}
+    if(alive&&el<4500)requestAnimationFrame(tick);else c.remove();})(t0);
+}
+function renderVerdict(){
+  const me=game.cash, rows=game.rows;
+  const lost=rows.reduce((a,r)=>a+r.lost,0), idle=rows.reduce((a,r)=>a+r.idle,0), interest=rows.reduce((a,r)=>a+r.interest,0);
+  let changes=0; for(let i=1;i<rows.length;i++){const a=rows[i-1].cfg,b=rows[i].cfg; if(a.bakers!==b.bakers||a.wh!==b.wh||a.dl!==b.dl)changes++;}
+  const lessons=[
+    lost?`До конкурентів пішло <b>${lost} тис.</b> клієнтів: у ці роки потужності не вистачало.`:`Ви жодного разу не втратили клієнтів через брак потужності.`,
+    idle?`Пекарі простоювали на <b>${idle} тис. шт.</b>, а зарплату ви платили повністю. Це ціна фіксованих витрат.`:`Пекарі жодного разу не простоювали.`,
+    changes?`Ви змінювали стратегію <b>${changes} ${changes===1?'раз':'рази'}</b>. Рішення ухвалюються до того, як стає відомий попит, тому хто реагує лише на минулий рік, завжди на крок позаду.`:`Ви жодного разу не змінили стратегію. Порівняйте свій результат із тим, що було б, якби ви знали попит наперед.`,
+    interest?`На відсотках за кредит ви втратили <b>${interest} тис.</b> Великі витрати на початку року потребують запасу грошей.`:`Ви обійшлися без кредиту.`
+  ];
+  const refs=[['Ваш результат',me,game.bankrupt?'банкрутство':''],
+    ['Якби ви знали попит наперед (найкращий можливий результат)',REF.perfect.cash,''],
+    ['Найкраща стратегія без змін: '+cfgText(REF.static.c,REF.static.c.gen),REF.static.cash,''],
+    ['Обережна: 2 пек. · склад далеко · без генератора · агрегатор',REF.cautious.cash,''],
+    ['Амбітна: 5 пек. · склад близько · генератор · кур\u2019єр',REF.bold.cash,REF.bold.bankrupt?'банкрутство':'']];
+  const borrowedAny=rows.some(r=>r.borrowed>0);
+  const late=rows.filter(r=>r.y>=2);
+  const badges=[
+    {i:'🏆',t:'Краще за еталон',d:'обійшли найкращу стратегію без змін',got:!game.bankrupt&&me>REF.static.cash},
+    {i:'💰',t:'Мільйонери',d:'мільйон гривень або більше наприкінці',got:me>=1000},
+    {i:'🛡',t:'Без кредиту',d:'жодного разу не позичали',got:!borrowedAny},
+    {i:'🎯',t:'Жодного втраченого клієнта',d:'потужності завжди вистачало',got:lost===0&&rows.length===5},
+    {i:'🧘',t:'Без простою',d:'пекарі завжди були завантажені',got:idle===0&&rows.length===5},
+    {i:'⚡',t:'Пережили зиму',d:'генератор у рік відключень',got:rows.length>=3&&rows[2].genOwned},
+    {i:'🚚',t:'Уникли hold-up',d:'власний кур\u2019єр, коли агрегатор підняв комісію',got:late.length===3&&late.every(r=>r.cfg.dl==='own')},
+    {i:'🔄',t:'Гнучкі',d:'змінювали стратегію 2+ рази',got:changes>=2},
+    {i:'💀',t:'Банкрути',d:'бувало й таке',got:game.bankrupt}
+  ];
+  game.badges=badges.filter(b=>b.got).map(b=>b.i).join('');
+  const v=document.getElementById('verdict');
+  v.innerHTML=`
+    <div class="eyebrow">${game.bankrupt?'Банкрутство':'Підсумок 5 років'}${teamName()?' · '+esc(teamName()):''}</div>
+    ${!game.bankrupt&&me>START?`<div class="win">🎉 Ви виграли: пекарня заробила ${plain(me-START)} тис. понад стартовий капітал</div>`:(!game.bankrupt?`<div class="win lose">Пекарня вижила, але грошей стало менше, ніж на старті</div>`:'')}
+    <div class="big ${me>=0?'pos':'neg'}">${plain(me)} тис. грн</div>
+    <p>${game.bankrupt?`У ${game.year}-му році борг перевищив ліміт ${LIMIT} тис. Банк більше не кредитує пекарню, і вона закривається.`:`Стільки грошей у пекарні наприкінці 5-го року. На старті було ${START} тис.`}</p>
+    <h2>Порівняння</h2>
+    <div class="tablewrap"><table class="history"><tbody>${refs.map((r,i)=>`<tr${i===0?' style="font-weight:700"':''}><td>${r[0]}${r[2]?' · <span class="neg">'+r[2]+'</span>':''}</td><td class="n ${r[1]>=0?'pos':'neg'}">${plain(r[1])}</td></tr>`).join('')}</tbody></table></div>
+    <h2>Що вплинуло на результат</h2>
+    <ul class="lessons">${lessons.map(l=>`<li><span>${l}</span></li>`).join('')}</ul>
+    <h2>Досягнення: ${badges.filter(b=>b.got).length} з ${badges.length}</h2>
+    <div class="badges">${badges.map(b=>`<div class="badge ${b.got?'got':'no'}"><span class="i" aria-hidden="true">${b.i}</span><div><b>${b.t}</b><span>${b.d}</span></div></div>`).join('')}</div>
+    <div class="actions"><button class="btn" id="againBtn" type="button">Зіграти ще раз</button></div>`;
+  v.hidden=false;
+  document.getElementById('againBtn').onclick=reset;
+  saveHistory(me);
+  v.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  if(!game.bankrupt&&me>START){setTimeout(()=>confetti(me>REF.static.cash),350);if(me>REF.static.cash)setTimeout(()=>confetti(true),1400);}
+}
+function loadHist(){try{return JSON.parse(localStorage.getItem('croissant-history-v3')||'[]');}catch(e){return [];}}
+function saveHistory(total){const h=loadHist();h.push({team:teamName()||'Команда '+(h.length+1),pick:game.rows.map(r=>r.cfg.bakers).join('→')+(game.bankrupt?' · банкрут':''),badges:game.badges||'',total});try{localStorage.setItem('croissant-history-v3',JSON.stringify(h));}catch(e){}renderHistory(h);}
+function renderHistory(h=loadHist()){const box=document.getElementById('historyBox');if(!h.length){box.hidden=true;return;}box.hidden=false;document.getElementById('historyBody').innerHTML=[...h].sort((a,b)=>b.total-a.total).map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.team)}</td><td>${esc(r.pick)}</td><td>${r.badges||'—'}</td><td class="n ${r.total>=0?'pos':'neg'}">${plain(r.total)}</td></tr>`).join('');}
+function reset(){
+  plan={bakers:2,wh:'near',gen:false,dl:'agg'};
+  game={year:0,cash:START,hasGen:false,rows:[],started:false,over:false,bankrupt:false};
+  document.getElementById('years').innerHTML='';
+  ['verdict','gameView','yearActions'].forEach(id=>document.getElementById(id).hidden=true);
+  document.getElementById('plannerWrap').hidden=false; document.getElementById('changeBox').open=true;
+  document.getElementById('app').hidden=true; document.getElementById('mbar').hidden=true; document.getElementById('intro').hidden=false;
+  document.getElementById('teamName').value='';
+  shownLeft=null; renderPlanner(); renderBoard(); renderLeaders(); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+}
+function renderLeaders(){
+  const h=loadHist().sort((a,b)=>b.total-a.total).slice(0,3);
+  document.getElementById('leaders').innerHTML=h.length?'<span>Найкращі результати на цьому пристрої:</span>'+h.map((r,i)=>`<span>${['🥇','🥈','🥉'][i]} <b>${esc(r.team)}</b>: ${plain(r.total)} тис.</span>`).join(''):'';
+}
+function startGame(){
+  document.getElementById('intro').hidden=true; document.getElementById('app').hidden=false; document.getElementById('mbar').hidden=false;
+  const t=teamName(); document.querySelector('#app h1').textContent=t?'Команда «'+t+'»':'Круасан-Бізнес: 5 років';
+  window.scrollTo({top:0,behavior:'auto'});
+}
+document.getElementById('introBtn').onclick=startGame;
+document.getElementById('teamName').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
+document.getElementById('goBtn').onclick=runYear;
+document.getElementById('mbBtn').onclick=runYear;
+document.getElementById('nextBtn').onclick=runYear;
+document.getElementById('clearHist').onclick=()=>{try{localStorage.removeItem('croissant-history-v3');}catch(e){}renderHistory([]);};
+renderPlanner();renderBoard();renderHistory();renderLeaders();
+</script>
+
+</body></html>
